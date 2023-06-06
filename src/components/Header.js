@@ -2,7 +2,7 @@ export function Header() {
   return (
     <header>
       <div className='container header'>
-        <a href='./index.html' className='header__logo'>
+        <a href='./' className='header__logo'>
           <svg
             viewBox='0 0 331 53'
             fill='none'

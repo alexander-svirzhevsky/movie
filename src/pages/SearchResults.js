@@ -4,50 +4,49 @@ import { List } from "../components/List";
 import { ActorCard } from "../components/ActorCard";
 import { MovieCard } from "../components/MovieCard";
 import { useEffect } from "react";
-import getSearchResults from "../api/api";
+import useSearch from "../hooks/useSearch";
 
 export function SearchResults() {
   const searchText = getUrlParam("searchText");
+  const { searchResult, error, loading, getResults } = useSearch();
+
+  const actors = searchResult.filter((item) => !("year" in item));
+  const movies = searchResult.filter((item) => "year" in item);
 
   useEffect(() => {
-    (async () => {
-      const response = await getSearchResults(searchText);
-      console.log(response);
-    })();
+    getResults(searchText);
   }, []);
+
   return (
-    <div className="page theme-light">
+    <div className='page theme-light'>
       <Header />
-      <div className="page-layout container">
-        <div>SearchResults page {encodeURI(searchText)}</div>
-        <List title={"Actors"} variant={"column"}>
-          <ActorCard
-            id="1"
-            imgSrc={"https://loremflickr.com/320/240"}
-            name={"Brad Pitt"}
-          />
-          <ActorCard
-            id="1"
-            imgSrc={"https://loremflickr.com/320/240"}
-            name={"Brad Pitt"}
-          />
-        </List>
-        <List title={"Movies"} variant={"grid"}>
-          <MovieCard
-            id="12"
-            imgSrc={"https://loremflickr.com/320/240"}
-            duration="120 min"
-            year="2015"
-            title="Money Ball"
-          />
-          <MovieCard
-            id="12"
-            imgSrc={"https://loremflickr.com/320/240"}
-            duration="120 min"
-            year="2015"
-            title="Money Ball"
-          />
-        </List>
+      <div className='page-layout container'>
+        {error !== "" ? <p>{error}</p> : null}
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            <List title={"Actors"} variant={"column"}>
+              {actors.map((actor) => (
+                <ActorCard
+                  id={actor.id}
+                  imgSrc={actor.imgSrc}
+                  name={actor.name}
+                />
+              ))}
+            </List>
+            <List title={"Movies"} variant={"grid"}>
+              {movies.map((movie) => (
+                <MovieCard
+                  id={movie.id}
+                  imgSrc={movie.imgSrc}
+                  year={movie.year}
+                  title={movie.title}
+                />
+              ))}
+            </List>
+          </>
+        )}
       </div>
     </div>
   );
