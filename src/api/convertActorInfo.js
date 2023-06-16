@@ -6,8 +6,14 @@ export function convertActorBio(response) {
   };
 }
 
+function convertMovieId(id) {
+  return id.split("/")[2];
+}
+
 function convertMovie(movie) {
+  console.log(movie);
   return {
+    id: convertMovieId(movie.id),
     imgSrc: movie?.image?.url,
     title: movie.title,
     year: movie?.year,
@@ -16,6 +22,6 @@ function convertMovie(movie) {
 
 export function convertActorFilmography(result) {
   return result.filmography
-    .filter((movie) => movie.category === "actor")
+    .filter((movie) => movie.category === "actor" && movie.image && movie.year)
     .map(convertMovie);
 }
